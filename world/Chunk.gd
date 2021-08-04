@@ -25,7 +25,7 @@ var st = SurfaceTool.new()
 var mesh = null
 var mesh_instance = null
 
-var material = preload("res://assets/new_spatialmaterial.tres")
+var material = preload("res://assets/textures/new_spatialmaterial.tres")
 
 var chunk_position = Vector2() setget set_chunk_position
 

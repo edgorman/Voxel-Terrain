@@ -1,6 +1,6 @@
 extends Spatial
 
-var chunk_scene = preload("res://Chunk.tscn")
+var chunk_scene = preload("res://world/Chunk.tscn")
 
 var load_radius = 5
 onready var chunks = $Chunks
