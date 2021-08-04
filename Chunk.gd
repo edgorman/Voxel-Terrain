@@ -27,6 +27,10 @@ var mesh_instance = null
 
 var material = preload("res://assets/new_spatialmaterial.tres")
 
+var chunk_position = Vector2() setget set_chunk_position
+
+var noise = OpenSimplexNoise.new()
+
 func _ready():
 	material.albedo_texture.set_flags(2)
 	
@@ -43,13 +47,19 @@ func generate():
 			blocks[i][j] = []
 			blocks[i][j].resize(Global.DIMENSION.z)
 			for k in range(0, Global.DIMENSION.z):
+				var global_pos = chunk_position * \
+					Vector2(Global.DIMENSION.x, Global.DIMENSION.z) + \
+					Vector2(i, k)
+				
+				var height = int((noise.get_noise_2dv(global_pos) + 1)/2 * Global.DIMENSION.y)
+				
 				var block = Global.AIR
 				
-				if j < 16:
+				if j < height / 2:
 					block = Global.STONE
-				elif j < 32:
+				elif j < height:
 					block = Global.DIRT
-				elif j == 32:
+				elif j == height:
 					block = Global.GRASS
 				
 				blocks[i][j][k] = block
@@ -79,6 +89,8 @@ func update():
 	
 	add_child(mesh_instance)
 	mesh_instance.create_trimesh_collision()
+	
+	self.visible = true
 
 func check_transparent(x, y, z):
 	if x >= 0 and x < Global.DIMENSION.x and \
@@ -125,3 +137,10 @@ func create_face(i, x, y, z, texture_atlas_offset):
 	
 	st.add_triangle_fan(([a, b, c]), ([uv_a, uv_b, uv_c]))
 	st.add_triangle_fan(([a, c, d]), ([uv_a, uv_c, uv_d]))
+
+func set_chunk_position(pos):
+	chunk_position = pos
+	translation = Vector3(pos.x, 0, pos.y) * Global.DIMENSION
+	
+	self.visible = false
+	
